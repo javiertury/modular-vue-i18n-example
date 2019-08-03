@@ -85,7 +85,9 @@
     })
 
     app.$router.onReady(() => {
-      app.$mount('#app');
+      app.$i18n.onReady(() => {
+        app.$mount('#app');
+      });
     });
   </script>
 </body>

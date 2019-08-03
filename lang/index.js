@@ -1,6 +1,4 @@
-import en from './en.js';
-
 export default {
-  en,
+  en: () => import('./en.js'),
   es: () => import('./es.js'),
 }
