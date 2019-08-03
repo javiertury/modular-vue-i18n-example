@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Modular vue i18n</title>
+  <script src="https://unpkg.com/vue"></script>
+  <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+  <script src="https://unpkg.com/vue-i18n/dist/vue-i18n.js"></script>
+</head>
+<body>
+  <div id="app">
+  </div>
+  <script type="module">
+    import { languageGuard } from './guards.js';
+    import { ModularVueI18n } from './i18n.js';
+
+    import Main from './main.js';
+    import Home from './home.js';
+    import baseLangs from './lang/index.js';
+
+    import Houses from './modules/houses/main.js';
+    import houseLangs from './modules/houses/lang/index.js';
+
+    import Cars from './modules/cars/main.js';
+    import carLangs from './modules/cars/lang/index.js';
+
+    Vue.use(VueRouter)
+
+    const i18n = new ModularVueI18n({
+      locale: 'en',
+      fallbackLocale: 'en',
+      modules: {
+        base: baseLangs,
+      },
+    });
+
+    i18n.allowedLocales = ['en', 'es']
+
+    const routes = [
+      {
+        path: '/:lang',
+        name: 'home',
+        component: Home,
+        props: true,
+      },
+      {
+        path: '/:lang/houses',
+        name: 'houses',
+        component: Houses,
+        props: true,
+        meta: {
+          localeModules: {
+            houses: houseLangs,
+          },
+        },
+      },
+      {
+        path: '/:lang/cars',
+        name: 'cars',
+        component: Cars,
+        props: true,
+        meta: {
+          localeModules: {
+            cars: carLangs,
+          },
+        },
+      },
+      {
+        path: '*',
+        name: 'notFound',
+        redirect: to => '/en',
+      },
+    ]
+
+    const router = new VueRouter({
+      base: 'modular-vue-i18n-example',
+      routes,
+    })
+
+    languageGuard(router, i18n)
+
+    const app = new Vue({
+      i18n,
+      router,
+      render: h => h(Main),
+    })
+
+    app.$router.onReady(() => {
+      app.$mount('#app');
+    });
+  </script>
+</body>
+</html>
